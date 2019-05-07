@@ -6,9 +6,18 @@ import * as serviceWorker from './serviceWorker';
 
 // ====================================================
 // STATE
-import { createStore } from 'redux';
-import initialState from './base.json';
-console.log(initialState);
+import { createStore, combineReducers } from 'redux';
+import initialCards from './base.json';
+// console.log(initialState);
+
+const VISIBILITY_ALL = 'all';
+const VISIBILITY_CAUGHT = 'caught';
+const VISIBILITY_UNCAUGHT = 'uncaught';
+
+const initialState = {
+    ...initialCards,
+    visibilityFilter: VISIBILITY_ALL
+};
 
 // the state is an object
 // with a cards property
@@ -30,19 +39,43 @@ function catchCard (id) {
 }
 window.catchCard = catchCard;
 
+const ACTION_VISIBILITY_ALL = VISIBILITY_ALL;
+const ACTION_VISIBILITY_CAUGHT = VISIBILITY_CAUGHT;
+const ACTION_VISIBILITY_UNCAUGHT = VISIBILITY_UNCAUGHT;
+
+function setVisibilityAll() {
+    return {
+        type: ACTION_VISIBILITY_ALL
+    };
+}
+
+function setVisibilityCaught() {
+    return {
+        type: ACTION_VISIBILITY_CAUGHT
+    };
+}
+
+function setVisibilityUncaught() {
+    return {
+        type: ACTION_VISIBILITY_UNCAUGHT
+    };
+}
+window.setVisibilityAll = setVisibilityAll;
+window.setVisibilityCaught = setVisibilityCaught;
+window.setVisibilityUncaught = setVisibilityUncaught;
 
 // ====================================================
 // REDUCER
 
-function cards(state=initialState, action={type: ''}) {
+// cards reducer manages an array
+function cards(state=initialState.cards, action={type: ''}) {
     console.log(`cards got called with ${action.payload}`);
 
     switch(action.type) {
         case ACTION_CATCH:
             console.log(`cards got called with ${action.payload.id}`);
             // find the card, set it to "caught"
-            const newState = {
-                cards: state.cards.map(card => {
+            const newState = state.map(card => {
                     if (card.id === action.payload.id) {
                         console.log('found the card! yay!');
                         return {
@@ -53,7 +86,7 @@ function cards(state=initialState, action={type: ''}) {
                         return card;
                     }
                 })
-            };
+            ;
             // Whatever is returned by the reducer
             // is automatically used by the store as 
             // the new version of state.
@@ -66,10 +99,32 @@ function cards(state=initialState, action={type: ''}) {
     }
 }
 
+// visibility reducer manages a string
+function visibility(state=initialState.visibilityFilter, action={type: ''}) {
+    switch(action.type) {
+        case ACTION_VISIBILITY_ALL:            
+            return VISIBILITY_ALL;
+        break;
+        case ACTION_VISIBILITY_CAUGHT:            
+            return VISIBILITY_CAUGHT;
+        break;
+        case ACTION_VISIBILITY_UNCAUGHT:            
+            return VISIBILITY_UNCAUGHT;
+        break;
+        default:
+            return state;
+        break;
+    }
+}
+
+const rootReducer = combineReducers({
+    cards: cards,
+    visibilityFilter: visibility
+});
 
 // ====================================================
 // STORE
-const store = createStore(cards);
+const store = createStore(rootReducer);
 window.store = store;
 
 
