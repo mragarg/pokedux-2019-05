@@ -1,6 +1,6 @@
 import React from 'react'
 
-function PokeList(props) {
+function PokeList({cards}) {
 
     const cardItems = cards.map(card => {
         return <li>{card.name}</li>
