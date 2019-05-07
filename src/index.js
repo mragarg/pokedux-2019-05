@@ -15,9 +15,13 @@ const VISIBILITY_CAUGHT = 'caught';
 const VISIBILITY_UNCAUGHT = 'uncaught';
 
 const initialState = {
-    ...initialCards,
+    // cards: [],
+    ...initialCards,   // This spreads the "cards": [...] into this spot in initialState
+    // cards: initialCards.cards // This line is the equivalent of ...initialCards
     visibilityFilter: VISIBILITY_ALL
 };
+
+console.log(initialState);
 
 // the state is an object
 // with a cards property
@@ -117,6 +121,9 @@ function visibility(state=initialState.visibilityFilter, action={type: ''}) {
     }
 }
 
+// This is where you are assigning responsibility
+// of one piece of state
+// to one reducer.
 const rootReducer = combineReducers({
     cards: cards,
     visibilityFilter: visibility
